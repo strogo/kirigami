@@ -58,11 +58,12 @@ QObject *BasicThemeDeclarative::instance(const BasicTheme *theme)
                 QtObject {\n\
                     property QtObject theme: Kirigami.Theme\n\
                 }", QUrl(QStringLiteral("basictheme.cpp")));
-qWarning()<<c.errors();
+
         QObject *obj = c.create();
         m_declarativeBasicTheme = obj->property("theme").value<QObject *>();
     } else {
         QQmlComponent c(engine, m_url);
+
         QObject *obj = c.create();
         m_declarativeBasicTheme = obj;
     }
@@ -265,6 +266,7 @@ void BasicTheme::syncColors()
     QPalette pal = qApp->palette();
     pal.setColor(QPalette::WindowText, textColor());
     pal.setColor(QPalette::Button, m_buttonBackgroundColor);
+    pal.setColor(QPalette::ButtonText, m_buttonTextColor);
     pal.setColor(QPalette::Light, m_buttonBackgroundColor.lighter(120));
     pal.setColor(QPalette::Dark, m_buttonBackgroundColor.darker(120));
     pal.setColor(QPalette::Mid, m_buttonBackgroundColor.darker(110));

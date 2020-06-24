@@ -920,7 +920,7 @@ PlatformTheme *PlatformTheme::qmlAttachedProperties(QObject *object)
         }
     }
 
-    KirigamiPluginFactory *factory = PlatformThemePrivate::s_pluginFactory.value(QQuickStyle::name());
+    KirigamiPluginFactory *factory = PlatformThemePrivate::s_pluginFactory.value(styleName);
 
     //check for the plugin only once: it's an heavy operation
     if (factory) {
@@ -932,7 +932,7 @@ PlatformTheme *PlatformTheme::qmlAttachedProperties(QObject *object)
         for (QObject* staticPlugin : QPluginLoader::staticInstances()) {
             KirigamiPluginFactory *factory = qobject_cast<KirigamiPluginFactory *>(staticPlugin);
             if (factory) {
-                PlatformThemePrivate::s_pluginFactory[QQuickStyle::name()] = factory;
+                PlatformThemePrivate::s_pluginFactory[styleName] = factory;
                 return factory->createPlatformTheme(object);
             }
         }
@@ -943,14 +943,14 @@ PlatformTheme *PlatformTheme::qmlAttachedProperties(QObject *object)
             const auto fileNames = dir.entryList(QDir::Files);
             for (const QString &fileName : fileNames) {
                 //TODO: env variable?
-                if (!QQuickStyle::name().isEmpty() && fileName.startsWith(QQuickStyle::name())) {
+                if (!styleName.isEmpty() && fileName.startsWith(styleName)) {
                     QPluginLoader loader(dir.absoluteFilePath(fileName));
                     QObject *plugin = loader.instance();
                     //TODO: load actually a factory as plugin
 
                     KirigamiPluginFactory *factory = qobject_cast<KirigamiPluginFactory *>(plugin);
                     if (factory) {
-                        PlatformThemePrivate::s_pluginFactory[QQuickStyle::name()] = factory;
+                        PlatformThemePrivate::s_pluginFactory[styleName] = factory;
                         return factory->createPlatformTheme(object);
                     }
                 }
